@@ -1,0 +1,385 @@
+/*
+  Feito por Edmar Wantuil Silva Júnior
+  Em 2011
+*/
+#include  <stdio.h>
+#include  <stdlib.h>
+
+//Função  para  pausar  a  tela
+void  pause_screen()
+{
+  printf("\nAperte  enter  para  continuar...");
+  getchar();
+  getchar();
+}
+
+//Função  para  limpar  a  tela
+void  clear_screen()
+{
+  system("clear");
+}
+
+//Estrutura  para  dados
+typedef  struct  data
+{
+  int  number;
+  //ponteiro  para  o  proximo  item  do  array
+  struct  data  *next;
+}  datas;
+
+//ponteiros  para  o  primeiro  dado  e  o  ultimo  dado
+struct  data  *begin,  *end;
+
+void  eguals(int  number,  int  size)
+{
+  int  cont=  10;
+  while(size  >=  cont)
+  {
+    if(cont  >  number)
+      printf("0");
+    cont=  cont  *  10;
+  }
+}
+
+//Contator  para  todos  os  dados  do  array
+int  all_data=  0;
+
+void  clear_data()
+{
+  struct  data  *temp;
+  temp=  begin;
+  while(temp  !=  NULL)
+  {
+    begin=  temp->next;
+    free(temp);
+    temp=  begin;
+  }
+  begin=  NULL;
+  end=  NULL;
+  all_data=  0;
+}
+
+//Função  para  adicionar  item  no  array
+void  add_data()
+{
+  clear_screen();
+  //ler  o  numero  e  o    salva  em  uma  variavel  temporaria
+  int  input=  0;
+  printf("Adicionar\n");
+  printf("  Numero:  ");
+  scanf("%d",  &input);
+  //se  não  for  o  primeiro  numero  fara...  
+  if(all_data  !=  0)
+  {
+    struct  data  *temp;
+    temp=  malloc  (sizeof  (datas));
+    temp->next=  NULL;
+    temp->number=  input;
+      end->next=  temp;
+    end=  temp;
+    all_data++;
+  }
+  //se  for  o  primeiro
+  else
+  {
+    begin=  malloc(sizeof(datas));
+    begin->next=  NULL;
+    begin->number=  all_data  +  1;
+    end=begin;
+    all_data++;
+  }
+  clear_screen();
+  //printf("Dado  adicionado  com  sucesso!");
+  //pause_screen();
+}
+
+//deleta  endereço  recebido  por  paramento
+int  delete_data(struct  data  *delete)
+{
+  clear_screen();
+  if(delete  ==  begin)
+  {
+    begin=  begin->next;
+    free(delete);
+    all_data--;
+    return  0;
+  }
+  else
+  {
+    struct  data  *temp;
+    temp=  begin;
+    while(1)
+    {
+      if(temp->next  ==  delete)
+      {
+        temp->next=  temp->next->next;
+        if(delete  ==  end)
+           end=  temp;
+        free(delete);
+        all_data--;
+        end=  temp;
+        return  0;
+      }
+      temp=  temp->next;
+    }  
+  }
+  return  1;
+}
+
+//mostra  o  array  dado
+void  show_data()
+{
+  if(all_data  !=  0)
+  {
+    struct  data  *temp;
+    int  cont=  1;
+    temp=  begin;
+    while(temp  !=  NULL)
+    {
+      printf("  ");
+      eguals(temp->number,  all_data);
+      printf("%d  -  %d\n",  cont,  temp->number);
+      temp=  temp->next;
+      cont++;
+    }
+  }
+  else
+    printf("Sua  lista  está  vazia!!!");
+}
+
+//Procura  um  valor  no  array  de  dados
+void  search_data()
+{
+  clear_screen();
+  printf("Pesquisar\n");
+  printf("Procura  por:  ");
+  int  search=  0;
+  scanf("%d",  &search);
+  struct  data  *temp;
+  temp=  begin;
+  int  cont=  1;
+  int  found=  0;
+  //Percore  todo  o  array  e  quando  o  valor  encrotando  exibi  na  tela
+  while(temp  !=  NULL)
+  {
+    if(search  ==  temp->number)
+    {
+      printf("  %d  -  %d\n",  cont,  temp->number);
+      found++;
+    }
+    temp=  temp->next;
+    cont++;
+  }
+  if(found  >=  1)
+    printf("  Foi  encrotado(s)  %d  dado(s).",  found);
+  else
+    printf("  Nenhum  dado  encrotado.");
+  pause_screen();
+}
+
+//Função  para  buscar  o  endereço  de  memoria  a  ser  excluido
+void  search_delete()
+{
+  clear_screen();
+  printf("Deletar  dado\n");
+  printf("  Deletar  dado  com  o  numero=  ");
+  int  search=  0;
+  scanf("%d",  &search);
+  struct  data  *temp;
+  temp=  begin;
+  int  found=  0;
+  //Roda  o  array  de  dados  todo
+  while(temp  !=  NULL)
+  {
+    //Quando  achar  o  numero  a  ser  excluido  chama  a  função  para  deletar  passando  o  endereço  do  dado  a  ser  excluido
+    if(search  ==  temp->number)
+    {
+      delete_data(temp);
+      found++;
+    }
+    temp=  temp->next;
+  }
+  if(found  >  0)
+    printf("Dado  deletado  com  sucesso!");
+  else
+    printf("Nenhum  dado  deletado");
+  pause_screen();
+}
+
+//Menu  fila
+int  menu_file()
+{
+  clear_screen();
+  int  option=  0;
+  printf("      Menu  Fila\n");
+  printf("  1-  Adicionar\n");
+  printf("  2-  Excluir\n");
+  printf("  3-  Exibir\n");
+  printf("  4-  Pesquisar\n");
+  printf("  5-  Sair\n");
+  printf("Opcao:  ");
+  scanf("%d",  &option);
+  switch  (option)
+  {
+    case  1:
+      add_data();
+    break;
+    case  2:
+      if(delete_data(begin)  ==  0)
+        printf("Dado  deletado  com  sucesso!");
+      else
+        printf("Nenhum  dado  deletado");
+      pause_screen();
+    break;
+    case  3:
+      clear_screen();
+      printf("Estado  atual  da  fila\n");
+      show_data();
+      pause_screen();
+    break;
+    case  4:
+      search_data();
+    break;
+    case  5:
+      clear_data();
+    break;
+    default:
+      clear_screen();
+      printf("Opcao  invalida!");
+      pause_screen();
+    break;
+  }
+  return  option;
+}
+
+//Menu  pilha
+int  menu_stack()
+{
+  clear_screen();
+  int  option=  0;
+  printf("      Menu  Pilha\n");
+  printf("  1-  Adicionar\n");
+  printf("  2-  Excluir\n");
+  printf("  3-  Exibir\n");
+  printf("  4-  Pesquisar\n");
+  printf("  5-  Sair\n");
+  printf("Opcao:  ");
+  scanf("%d",  &option);
+  switch  (option)
+  {
+    case  1:
+      add_data();
+    break;
+    case  2:
+      if(delete_data(end)  ==  0)
+        printf("Dado  deletado  com  sucesso!");
+      else
+        printf("Nenhum  dado  deletado");
+      pause_screen();
+    break;
+    case  3:
+      clear_screen();
+      printf("Estado  atual  da  fila\n");
+      show_data();
+      pause_screen();
+    break;
+    case  4:
+      search_data();
+    break;
+    case  5:
+       clear_data();
+    break;
+    default:
+      clear_screen();
+      printf("Opcao  invalida!");
+      pause_screen();
+    break;
+  }
+  return  option;
+}
+
+//Menu  lista
+int  menu_list()
+{
+  clear_screen();
+  int  option=  0;
+  printf("      Menu  Pilha\n");
+  printf("  1-  Adicionar\n");
+  printf("  2-  Excluir\n");
+  printf("  3-  Exibir\n");
+  printf("  4-  Pesquisar\n");
+  printf("  5-  Sair\n");
+  printf("Opcao:  ");
+  scanf("%d",  &option);
+  switch  (option)
+  {
+    case  1:
+      add_data();
+    break;
+    case  2:
+      search_delete();
+    break;
+    case  3:
+      clear_screen();
+      printf("Estado  atual  da  fila\n");
+      show_data();
+      pause_screen();
+    break;
+    case  4:
+      search_data();
+    break;
+    case  5:
+       clear_data();
+    break;
+    default:
+      clear_screen();
+      printf("Opcao  invalida!");
+      pause_screen();
+    break;
+  }
+  return  option;
+}
+
+//Menu  principal
+int  menu()
+{
+  clear_screen();
+  printf("Menu  Principal\n");
+  printf("  1  -  Fila\n");
+  printf("  2  -  Pilha\n");
+  printf("  3  -  Lista\n");
+  printf("  4  -  Sair\n");
+  printf("  Opcao:  ");
+  int  option=  0;
+  scanf("%d",  &option);
+  switch  (option)
+  {
+    case  1:
+      while(menu_file()  !=  5);
+    break;
+    case  2:
+      while(menu_stack()  !=  5);
+    break;
+    case  3:
+      while(menu_list()  !=  5);
+    break;
+    case  4:
+      clear_screen();
+      printf("Até  logo!");
+      pause_screen();
+    break;
+    default:
+      clear_screen();
+      printf("Opcao  invalida!");
+      pause_screen();
+    break;
+  }
+  return  option;
+}
+
+//Função  principal
+int  main()
+{
+  while(menu()  !=  4);
+  return  0;
+}
